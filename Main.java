@@ -27,42 +27,52 @@ public class Main {
                     System.exit(0);
                 } else {
                     //should hopefully clear input
-                    input.next();
+                    input.nextLine();
                 }
             }
         }
         //should only continue if input = Y
-
+        validInput = false;
         //reset validInput
 
-        validInput = false;
-        PersonalBudget personalBudget = promptCreateBudget(input);
+        if (budgetBook != null) {
+            PersonalBudget personalBudget = new PersonalBudget("y", date, 70);
 
-        if (personalBudget != null) {
-            //add budget to budgetbook
-            budgetBook.addBudget(personalBudget);
-            while(!validInput) {
-                System.out.println("Would you like to add an expense or income to your budget? Please enter E for expense," +
-                        "I for income, or N for neither: ");
-                if (input.hasNext()) {
-                    String answer = input.next();
-                    if (answer.equalsIgnoreCase("E")) {
-                        validInput = true;
-                    } else if (answer.equalsIgnoreCase("I")) {
-                        validInput = true;
-                    } else {
-                        validInput = true;
-                        System.out.println("Ok.");
+            if (personalBudget != null) {
+                //add budget to budgetbook
+                budgetBook.addBudget(personalBudget);
+
+                while(!validInput) {
+                    System.out.println("Would you like to add an expense or income to your budget? Please enter E for expense," +
+                            "I for income, or N for neither: ");
+                    if (input.hasNext()) {
+                        String answer = input.next();
+                        //add an expense
+                        if (answer.equalsIgnoreCase("E")) {
+                            addExpense(personalBudget, input);
+
+                        } //add an income
+                        else if (answer.equalsIgnoreCase("I")) {
+                            addIncome(personalBudget, input);
+                        } //neither
+                        else if(answer.equalsIgnoreCase("N")){
+                            System.out.println("Ok.");
+                            validInput = true;
+                        } else {
+                            System.out.println("Invalid input. Please try again.");
+                        }
                     }
                 }
             }
+
         }
+
 
 
         //should only continue if a budget was created
 //create new budgets
 
-        personalBudget = promptCreateBudget(input);
+        //personalBudget = promptCreateBudget(input);
 
     }
 
@@ -142,5 +152,57 @@ public class Main {
         }
 
         return personalBudget;
+    }
+
+    /**
+     * Adds an expense to the specified personal budget.
+     * @param budget The budget the expense should be added to.
+     * @param input The Scanner object to gather user input
+     */
+    public static void addExpense(PersonalBudget budget, Scanner input){
+        System.out.println("How much was the expense? ex: 20");
+        if(input.hasNextInt()){
+            int expenseAmount = input.nextInt();
+            input.nextLine();
+        } else {
+            System.out.println("Please enter a valid amount.");
+            addExpense(budget, input);
+        }
+
+        System.out.println("What is the description for the expense? ex: Bought a new shirt");
+        if(input.hasNextLine()){
+            String description = input.nextLine();
+        } else {
+            System.out.println("Please enter a valid description.");
+            addExpense(budget, input);
+        }
+        budget.addExpense(expenseAmount, description);
+        System.out.println("Your expense has been added!");
+    }
+
+    /**
+     * Adds an income to the specified budget.
+     * @param budget The budget the income is to be added to.
+     * @param input The Scanner object to gather user input.
+     */
+    public static void addIncome(PersonalBudget budget, Scanner input){
+        System.out.println("How much was the income? ex: 100");
+        if(input.hasNextInt()){
+            int incomeAmount = input.nextInt();
+            input.nextLine();
+        } else {
+            System.out.println("Please enter a valid amount.");
+            addIncome(budget, input);
+        }
+
+        System.out.println("What is the description for the income? ex: Payday");
+        if(input.hasNextLine()){
+            String description = input.nextLine();
+        } else {
+            System.out.println("Please enter a valid description.");
+            addIncome(budget, input);
+        }
+        budget.addIncome(incomeAmount, description);
+        System.out.println("Your income has been added!");
     }
 }
